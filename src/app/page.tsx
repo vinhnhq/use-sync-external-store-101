@@ -1,95 +1,80 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Counter } from "@/components/Counter";
+import { CounterDisplay } from "@/components/CounterDisplay";
+import { MediaQueryDemo } from "@/components/MediaQueryDemo";
+import { SimpleMediaQueryTest } from "@/components/SimpleMediaQueryTest";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+	return (
+		<main className="min-h-screen p-8 bg-gray-50">
+			<div className="max-w-3xl mx-auto">
+				<h1 className="text-3xl font-bold text-center mb-8">useSyncExternalStore Examples</h1>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+				<p className="text-center mb-8 text-gray-600">
+					Examples of using React's <code className="bg-gray-100 px-1 rounded">useSyncExternalStore</code> hook to
+					create external stores. This includes a simple counter store and a media query store that uses the browser's{" "}
+					<code className="bg-gray-100 px-1 rounded">matchMedia</code> API.
+				</p>
+
+				<div className="space-y-8">
+					<Counter />
+					<CounterDisplay />
+
+					{/* rAF Test Section with Multiple Media Query Components */}
+					<div className="p-6 bg-orange-50 rounded-lg border border-orange-200">
+						<h3 className="text-xl font-semibold mb-4 text-orange-900">🚀 requestAnimationFrame Test</h3>
+						<p className="text-sm text-orange-700 mb-4">
+							These components all use the same media query store. When you resize the window, they should all update
+							simultaneously via requestAnimationFrame batching for optimal performance.
+						</p>
+
+						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+							<SimpleMediaQueryTest id="1" color="bg-red-500" />
+							<SimpleMediaQueryTest id="2" color="bg-blue-500" />
+							<SimpleMediaQueryTest id="3" color="bg-green-500" />
+							<SimpleMediaQueryTest id="4" color="bg-purple-500" />
+							<SimpleMediaQueryTest id="5" color="bg-pink-500" />
+							<SimpleMediaQueryTest id="6" color="bg-indigo-500" />
+							<SimpleMediaQueryTest id="7" color="bg-yellow-500" />
+							<SimpleMediaQueryTest id="8" color="bg-teal-500" />
+							<SimpleMediaQueryTest id="9" color="bg-gray-500" />
+							<SimpleMediaQueryTest id="10" color="bg-orange-500" />
+							<SimpleMediaQueryTest id="11" color="bg-cyan-500" />
+							<SimpleMediaQueryTest id="12" color="bg-emerald-500" />
+						</div>
+
+						<div className="mt-4 p-3 bg-white rounded border-l-4 border-orange-500">
+							<p className="text-sm text-orange-800">
+								<strong>💡 How to test:</strong> Resize your browser window and watch the render times. All components
+								should update together in the same frame thanks to rAF batching in the media query store.
+							</p>
+						</div>
+					</div>
+
+					<MediaQueryDemo />
+
+					<div className="p-6 bg-yellow-50 rounded-lg border border-yellow-200">
+						<h3 className="text-lg font-semibold mb-2">How it works</h3>
+						<p>
+							The <code className="bg-gray-100 p-1 rounded">useSyncExternalStore</code> hook from React allows
+							components to subscribe to an external data store. The hook takes three arguments:
+						</p>
+						<ul className="list-disc pl-6 mt-2 space-y-1">
+							<li>
+								<code className="bg-gray-100 p-1 rounded">subscribe</code>: Function to register a callback to be called
+								when the store changes
+							</li>
+							<li>
+								<code className="bg-gray-100 p-1 rounded">getSnapshot</code>: Function to get the current value from the
+								store
+							</li>
+							<li>
+								<code className="bg-gray-100 p-1 rounded">getServerSnapshot</code>: Function to get the initial value
+								for SSR (optional)
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</main>
+	);
 }
