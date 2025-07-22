@@ -30,8 +30,16 @@ function getScrollYSnapshot(selector?: Selector) {
 }
 
 function subscribe(listener: Listener) {
+	function handleScroll() {
+		requestAnimationFrame(() => {
+			for (const listener of listeners) {
+				listener();
+			}
+		});
+	}
+
 	if (listeners.size === 0) {
-		global.window?.addEventListener("scroll", listener);
+		global.window?.addEventListener("scroll", handleScroll);
 	}
 
 	listeners.add(listener);
@@ -39,7 +47,7 @@ function subscribe(listener: Listener) {
 	return () => {
 		listeners.delete(listener);
 		if (listeners.size === 0) {
-			global.window?.removeEventListener("scroll", listener);
+			global.window?.removeEventListener("scroll", handleScroll);
 		}
 	};
 }

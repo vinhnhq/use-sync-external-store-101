@@ -42,8 +42,16 @@ function windowHeightSnapshot(selector: Selector = (h) => h): number {
 const listeners = new Set<Listener>();
 
 function subscribe(listener: Listener) {
+	function handleResize() {
+		requestAnimationFrame(() => {
+			for (const listener of listeners) {
+				listener();
+			}
+		});
+	}
+
 	if (listeners.size === 0) {
-		global.window?.addEventListener("resize", listener);
+		global.window?.addEventListener("resize", handleResize);
 	}
 
 	listeners.add(listener);
@@ -51,7 +59,7 @@ function subscribe(listener: Listener) {
 	return () => {
 		listeners.delete(listener);
 		if (listeners.size === 0) {
-			global.window?.removeEventListener("resize", listener);
+			global.window?.removeEventListener("resize", handleResize);
 		}
 	};
 }
