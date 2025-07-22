@@ -9,7 +9,7 @@ import {
 	useIsTablet,
 	useMediaQueryState,
 	useReducedMotion,
-} from "@/store/useMediaQuery";
+} from "@/hooks/useMediaQuery";
 
 export function MediaQueryDemo() {
 	// Use individual hooks for specific breakpoints

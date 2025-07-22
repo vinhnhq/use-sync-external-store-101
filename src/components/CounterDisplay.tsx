@@ -1,10 +1,9 @@
 "use client";
 
-import { counterStore } from "@/store/counterStore";
+import useCounter from "@/hooks/useCounter";
 
 export function CounterDisplay() {
-	// Use the same counter store
-	const count = counterStore.useStore((state) => state.count);
+	const count = useCounter();
 
 	// Calculate properties based on count
 	const isEven = count % 2 === 0;

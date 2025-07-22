@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { counterActions, counterStore } from "@/store/counterStore";
+import useCounter, { Counter } from "@/hooks/useCounter";
 
-export function Counter() {
-	// Use the counter store
-	const count = counterStore.useStore((state) => state.count);
+export function CounterDispatcher() {
+	const count = useCounter();
 
 	// Local state for input value
 	const [inputValue, setInputValue] = useState("");
@@ -20,7 +19,7 @@ export function Counter() {
 		e.preventDefault();
 		const newCount = parseInt(inputValue);
 		if (!Number.isNaN(newCount)) {
-			counterActions.setCount(newCount);
+			Counter.increment();
 			setInputValue("");
 		}
 	};
@@ -32,7 +31,7 @@ export function Counter() {
 			<div className="flex justify-center space-x-4">
 				<button
 					type="button"
-					onClick={counterActions.decrement}
+					onClick={Counter.decrement}
 					className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
 				>
 					Decrement
@@ -40,7 +39,7 @@ export function Counter() {
 
 				<button
 					type="button"
-					onClick={counterActions.increment}
+					onClick={Counter.increment}
 					className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
 				>
 					Increment
@@ -48,7 +47,7 @@ export function Counter() {
 
 				<button
 					type="button"
-					onClick={counterActions.reset}
+					onClick={Counter.reset}
 					className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
 				>
 					Reset

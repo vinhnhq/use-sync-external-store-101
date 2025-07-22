@@ -1,6 +1,6 @@
 "use client";
 
-import { useCurrentBreakpoint, useIsDesktop, useIsMobile, useIsTablet } from "@/store/useMediaQuery";
+import { useCurrentBreakpoint, useIsDesktop, useIsMobile, useIsTablet } from "@/hooks/useMediaQuery";
 
 interface SimpleMediaQueryTestProps {
 	id: string;
@@ -20,22 +20,14 @@ export function SimpleMediaQueryTest({ id, color = "bg-blue-500" }: SimpleMediaQ
 		<div className={`p-4 rounded-lg text-white ${color} transition-all duration-200`}>
 			<div className="text-sm font-mono mb-2">Component #{id}</div>
 
-			<div className="text-lg font-bold mb-1">
-				{currentBreakpoint.toUpperCase()}
-			</div>
+			<div className="text-lg font-bold mb-1">{currentBreakpoint.toUpperCase()}</div>
 
 			<div className="text-xs opacity-90 space-y-1">
 				<div>Render time: {renderTime}</div>
 				<div className="flex gap-1 mt-2">
-					<span className={`px-1 rounded ${isMobile ? 'bg-white text-black' : 'bg-black bg-opacity-30'}`}>
-						M
-					</span>
-					<span className={`px-1 rounded ${isTablet ? 'bg-white text-black' : 'bg-black bg-opacity-30'}`}>
-						T
-					</span>
-					<span className={`px-1 rounded ${isDesktop ? 'bg-white text-black' : 'bg-black bg-opacity-30'}`}>
-						D
-					</span>
+					<span className={`px-1 rounded ${isMobile ? "bg-white text-black" : "bg-black bg-opacity-30"}`}>M</span>
+					<span className={`px-1 rounded ${isTablet ? "bg-white text-black" : "bg-black bg-opacity-30"}`}>T</span>
+					<span className={`px-1 rounded ${isDesktop ? "bg-white text-black" : "bg-black bg-opacity-30"}`}>D</span>
 				</div>
 			</div>
 		</div>
