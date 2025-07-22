@@ -1,15 +1,16 @@
-# useSyncExternalStore Examples
+# useSyncExternalStore 101
 
-A comprehensive demonstration of React's `useSyncExternalStore` hook with practical examples including external stores, media queries, and requestAnimationFrame optimization.
+A comprehensive collection of React hooks built with `useSyncExternalStore` demonstrating external state management, browser API integration, and performance optimization patterns.
 
 ## 🎯 What This Project Demonstrates
 
-This project showcases how to use React's `useSyncExternalStore` hook to:
-- Create external stores that work with React's concurrent features
-- Build responsive media query hooks with browser API integration
-- Optimize performance using requestAnimationFrame batching
-- Handle server-side rendering (SSR) safely
-- Share state across multiple components efficiently
+This project showcases practical implementations of React's `useSyncExternalStore` hook for:
+- **External state management** with shared stores
+- **Browser API integration** (mouse, scroll, resize, media queries)
+- **Performance optimization** using requestAnimationFrame batching
+- **Preventing state tearing** in React's concurrent mode
+- **SSR-safe implementations** for server-side rendering
+- **Global presence tracking** for managing side effects
 
 ## 🚀 Getting Started
 
@@ -25,161 +26,330 @@ npm run dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the examples in action.
+Open [http://localhost:3000](http://localhost:3000) to see all the interactive examples.
 
-## 📋 Examples Included
+## 📦 Available Hooks
 
-### 1. Counter Store
-**Files:** `src/store/counterStore.ts`, `src/components/Counter.tsx`, `src/components/CounterDisplay.tsx`
+### 🔢 State Management
 
-- Simple external store with increment/decrement actions
-- Demonstrates basic `useSyncExternalStore` usage
-- Shows how multiple components can share the same store
-- Includes SSR-safe implementation
+#### `useCounter`
+**File:** `src/hooks/useCounter.tsx`
 
-### 2. Media Query Store with rAF Optimization
-**Files:** `src/store/useMediaQuery.ts`, `src/components/MediaQueryDemo.tsx`, `src/components/SimpleMediaQueryTest.tsx`
+Simple external counter store with increment, decrement, and reset functionality.
 
-- Responsive breakpoint detection using `window.matchMedia`
-- **RequestAnimationFrame batching** for performance optimization
-- Multiple convenience hooks (`useIsMobile`, `useIsTablet`, etc.)
-- Accessibility support (dark mode, reduced motion preferences)
-- Automatic cleanup of event listeners
+```typescript
+import useCounter, { Counter } from '@/hooks/useCounter';
 
-### 3. RequestAnimationFrame Testing
-**Components:** 12 instances of `SimpleMediaQueryTest`
+function MyComponent() {
+  const count = useCounter();
 
-- Tests rAF batching with multiple components
-- Visual demonstration of synchronized updates
-- Performance comparison showcase
-- Real-time render timestamps
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={Counter.increment}>+</button>
+      <button onClick={Counter.decrement}>-</button>
+      <button onClick={Counter.reset}>Reset</button>
+    </div>
+  );
+}
+```
+
+#### `createGlobalPresence`
+**File:** `src/hooks/useGlobalPresence.tsx`
+
+Creates a hook that tracks when components are mounted/unmounted globally, useful for managing side effects.
+
+```typescript
+import createGlobalPresence from '@/hooks/useGlobalPresence';
+
+const useFakeCursorPresence = createGlobalPresence({
+  onMount: () => document.body.classList.add('cursor-none'),
+  onUnmount: () => document.body.classList.remove('cursor-none'),
+});
+
+function FakeCursor() {
+  useFakeCursorPresence(); // Automatically manages global state
+  return <div className="custom-cursor" />;
+}
+```
+
+### 🌐 Browser Events
+
+#### `useMousePosition`
+**File:** `src/hooks/useMousePosition.tsx`
+
+Tracks real-time mouse coordinates with optimized performance using requestAnimationFrame.
+
+```typescript
+import useMousePosition from '@/hooks/useMousePosition';
+
+function MouseTracker() {
+  const [x, y] = useMousePosition();
+  return <div>Mouse: {x}, {y}</div>;
+}
+```
+
+#### `useScrollY` & `useScrollYFloored`
+**File:** `src/hooks/useScrollY.tsx`
+
+Track vertical scroll position with optional value transformation.
+
+```typescript
+import { useScrollY, useScrollYFloored } from '@/hooks/useScrollY';
+
+function ScrollTracker() {
+  const scrollY = useScrollY();
+  const flooredScroll = useScrollYFloored(100); // Rounds to nearest 100px
+
+  return (
+    <div>
+      <p>Scroll: {scrollY}px</p>
+      <p>Floored: {flooredScroll}px</p>
+    </div>
+  );
+}
+```
+
+#### `useWindowSize`
+**File:** `src/hooks/useWindowSize.tsx`
+
+Monitor window dimensions with optional selector functions for value transformation.
+
+```typescript
+import { useWindowSize } from '@/hooks/useWindowSize';
+
+function WindowTracker() {
+  const { width, height } = useWindowSize();
+  const { width: roundedWidth } = useWindowSize({
+    widthSelector: (w) => Math.round(w / 100) * 100
+  });
+
+  return <div>{width} × {height} (rounded: {roundedWidth})</div>;
+}
+```
+
+### 📱 Media Queries
+
+#### `useMediaQuery` & Convenience Hooks
+**File:** `src/hooks/useMediaQuery.tsx`
+
+Comprehensive media query system with built-in breakpoints and accessibility support.
+
+```typescript
+import {
+  useMediaQuery,
+  useIsMobile,
+  useIsDesktop,
+  useCurrentBreakpoint,
+  useMediaQueryState
+} from '@/hooks/useMediaQuery';
+
+function ResponsiveComponent() {
+  const isMobile = useIsMobile();
+  const isDark = useMediaQuery('(prefers-color-scheme: dark)');
+  const breakpoint = useCurrentBreakpoint();
+  const mediaState = useMediaQueryState();
+
+  return (
+    <div>
+      <p>Mobile: {isMobile ? 'Yes' : 'No'}</p>
+      <p>Dark mode: {isDark ? 'Yes' : 'No'}</p>
+      <p>Breakpoint: {breakpoint}</p>
+    </div>
+  );
+}
+```
+
+**Built-in breakpoints:**
+- `useIsMobile()` - ≤767px
+- `useIsTablet()` - 768px-1023px
+- `useIsDesktop()` - ≥1024px
+- `useIsLarge()` - ≥1440px
+- `useIsDark()` - Dark mode preference
+- `useReducedMotion()` - Reduced motion preference
+
+## 🧩 Components
+
+### Interactive Demos
+
+- **`CounterDispatcher`** - Counter controls with input field
+- **`CounterDisplay`** - Read-only counter with computed properties
+- **`FakeCursor`** - Custom cursor using global presence
+- **`MediaQueryDemo`** - Comprehensive responsive demo
+- **`SimpleMediaQueryTest`** - Performance testing component
 
 ## 🔧 Key Technical Features
 
-### RequestAnimationFrame Optimization
+### ⚡ RequestAnimationFrame Optimization
 
-The media query store uses rAF to batch updates for optimal performance:
+Media query and mouse position hooks use rAF for optimal performance:
 
 ```typescript
 const notifyListeners = () => {
-    requestAnimationFrame(() => {
-        // All components update in the same frame
-        for (const listener of listeners) {
-            listener();
-        }
-    });
+  requestAnimationFrame(() => {
+    // All components update in the same frame
+    for (const listener of listeners) {
+      listener();
+    }
+  });
 };
 ```
 
 **Benefits:**
-- Eliminates layout thrashing during window resize
-- Batches multiple rapid changes into single updates
+- Eliminates layout thrashing during rapid changes
+- Batches multiple updates into single render cycles
 - Ensures updates happen at optimal rendering time
 - Improves performance with many subscribing components
 
-### SSR Safety
+### 🛡️ SSR Safety
 
-Both stores handle server-side rendering properly:
+All hooks handle server-side rendering properly:
 
 ```typescript
-// Client snapshot
-() => store.getState(),
-// Server snapshot - prevents hydration mismatches
-() => defaultValue
+return useSyncExternalStore(
+  subscribe,
+  () => getClientValue(), // Client snapshot
+  () => getServerValue()  // Server snapshot - prevents hydration mismatches
+);
 ```
 
-### Automatic Cleanup
+### 🧹 Automatic Cleanup
 
-Media query listeners are automatically managed:
-- Shared listeners across components
+Event listeners are automatically managed:
+- Shared listeners across multiple component instances
 - Automatic cleanup when no components are subscribed
 - Memory leak prevention
+- Optimal resource usage
 
-## 🧪 Testing the RequestAnimationFrame Behavior
+### 🚫 State Tearing Prevention
 
-1. **Resize your browser window** and observe the rAF test section
-2. Watch the "Render time" timestamps in all 12 colored components
-3. Notice how all components update **simultaneously** with identical timestamps
-4. Compare this to traditional approaches where updates might be staggered
-
-## 📱 Responsive Breakpoints
-
-The media query system includes these breakpoints:
-
-- **Mobile:** ≤767px
-- **Tablet:** 768px - 1023px  
-- **Desktop:** 1024px - 1439px
-- **Large:** ≥1440px
-
-Plus accessibility preferences:
-- **Dark mode:** `prefers-color-scheme: dark`
-- **Reduced motion:** `prefers-reduced-motion: reduce`
+All hooks prevent state tearing in React's concurrent mode by using `useSyncExternalStore`, ensuring consistent state across all components during concurrent renders.
 
 ## 🏗️ Project Structure
 
 ```
 src/
 ├── app/
-│   ├── page.tsx              # Main demo page
-│   ├── layout.tsx            # App layout with Tailwind
+│   ├── page.tsx              # Interactive demo showcase
+│   ├── layout.tsx            # App layout
 │   └── globals.css           # Global styles
 ├── components/
-│   ├── Counter.tsx           # Counter with controls
-│   ├── CounterDisplay.tsx    # Read-only counter display
-│   ├── MediaQueryDemo.tsx    # Comprehensive media query demo
-│   └── SimpleMediaQueryTest.tsx # Simple component for rAF testing
-└── store/
-    ├── counterStore.ts       # External counter store
-    ├── createStore.ts        # Generic store creator utility
-    └── useMediaQuery.ts      # Media query store with rAF batching
+│   ├── CounterDispatcher.tsx # Counter with controls
+│   ├── CounterDisplay.tsx    # Counter display
+│   ├── FakeCursor.tsx        # Custom cursor demo
+│   ├── MediaQueryDemo.tsx    # Media query examples
+│   └── SimpleMediaQueryTest.tsx # Performance testing
+└── hooks/
+    ├── useCounter.tsx        # External counter store
+    ├── useGlobalPresence.tsx # Global presence tracking
+    ├── useMousePosition.tsx  # Mouse coordinate tracking
+    ├── useScrollY.tsx        # Scroll position tracking
+    ├── useWindowSize.tsx     # Window size tracking
+    └── useMediaQuery.tsx     # Media query system
 ```
 
 ## 🎨 Tech Stack
 
 - **React 18** with `useSyncExternalStore`
 - **Next.js 14** with App Router
-- **TypeScript** for type safety
+- **TypeScript** for complete type safety
 - **Tailwind CSS** for responsive styling
-- **Bun/npm** for package management
+- **Bun** for fast package management
 
-## 💡 Key Learnings
+## 🧪 Testing the Examples
 
-### When to Use useSyncExternalStore
+The live demo includes several interactive tests:
 
-- ✅ External data sources (browser APIs, global state)
-- ✅ Performance-critical subscriptions
-- ✅ When you need React concurrent feature compatibility
-- ✅ SSR applications requiring hydration safety
+### 1. **Counter Store**
+- Multiple components sharing the same counter state
+- Real-time synchronization across displays
+- Demonstrates external state management
 
-### Performance Benefits
+### 2. **Browser Events**
+- **Mouse tracking** - Move your mouse to see coordinates
+- **Scroll tracking** - Scroll the page to see position updates
+- **Window resize** - Resize browser to see dimension changes
 
-- **Batched updates** via requestAnimationFrame
-- **Shared subscriptions** across components
-- **Automatic cleanup** prevents memory leaks
-- **Optimized re-renders** only when data actually changes
+### 3. **Media Queries**
+- **Responsive breakpoints** - Resize to see breakpoint changes
+- **rAF performance test** - 12 components updating simultaneously
+- **Accessibility support** - Dark mode and reduced motion detection
 
-### Browser Integration
+### 4. **Global Presence**
+- **Fake cursor** - Toggle to see global presence management
+- **Console logging** - Check browser console for presence events
 
-- Direct integration with `window.matchMedia`
-- Respects user accessibility preferences
-- Handles edge cases (SSR, rapid changes)
-- Works seamlessly with React's rendering cycle
+## 💡 Performance Testing
 
-## 🔍 Advanced Usage
+The demo includes a **requestAnimationFrame batching test** with 12 components:
 
-The project demonstrates advanced patterns like:
-- Generic store creators (`createStore.ts`)
-- Compound hooks (`useCurrentBreakpoint`, `useMediaQueryState`)
-- Performance optimization techniques
-- TypeScript integration with external stores
+1. Resize your browser window rapidly
+2. Watch the render timestamps in all colored components
+3. Notice how all components update **simultaneously** with identical timestamps
+4. Compare performance with traditional event handling approaches
+
+## ⚡ Understanding State Tearing
+
+State tearing occurs when different components render inconsistent views of external state during React's concurrent rendering. This project demonstrates prevention through:
+
+### The Problem
+```typescript
+// Component A renders with: { count: 5 }
+// External store updates to: { count: 6 }
+// Component B renders with: { count: 6 }
+// Result: UI shows inconsistent state (tearing)
+```
+
+### The Solution
+`useSyncExternalStore` prevents tearing by:
+- **Detecting inconsistencies** during concurrent renders
+- **Forcing synchronous rendering** when tearing is detected
+- **Ensuring consistent state snapshots** across all components
+- **Maintaining performance** through intelligent batching
+
+### Visual Demonstrations
+- **[Tearable Dots Demo](https://tearabledots.com/)** - Interactive tearing visualization
+- **[React UI Tearing](https://interbolt.org/blog/react-ui-tearing/)** - Comprehensive article
+
+## 🎯 Use Cases & Patterns
+
+### When to Use These Hooks
+
+✅ **Perfect for:**
+- Browser API integration (resize, scroll, media queries)
+- Real-time data that changes frequently
+- Performance-critical subscriptions
+- Global state that needs to be SSR-safe
+- External data sources (WebSockets, local storage)
+
+❌ **Not ideal for:**
+- Simple local component state (use `useState`)
+- Server state (use libraries like TanStack Query)
+- Complex client state graphs (consider Zustand, Redux)
+
+### Advanced Patterns
+
+The project demonstrates several advanced patterns:
+- **Shared subscription management** - Multiple components, single listener
+- **Selector functions** - Transform values before consumption
+- **Global presence tracking** - Coordinate effects across components
+- **Performance optimization** - rAF batching and cleanup
+- **SSR compatibility** - Safe server/client rendering
 
 ## 📚 Learn More
 
-- [useSyncExternalStore Documentation](https://react.dev/reference/react/useSyncExternalStore)
-- [Next.js App Router](https://nextjs.org/docs/app)
-- [Window.matchMedia API](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia)
-- [RequestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)
+### Core Documentation
+- [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore) - Official React docs
+- [Next.js App Router](https://nextjs.org/docs/app) - App Router guide
+
+### Understanding State Tearing
+- [Tearable Dots Demo](https://tearabledots.com/) - Interactive visualization
+- [React UI Tearing](https://interbolt.org/blog/react-ui-tearing/) - Detailed explanation
+
+### Browser APIs
+- [Window.matchMedia](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) - Media query API
+- [RequestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) - Animation optimization
 
 ---
 
-**Try resizing your browser window to see the magic happen! ✨**
+**🎮 Try the interactive demos - resize your window, move your mouse, and scroll to see the magic! ✨**
