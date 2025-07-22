@@ -10,6 +10,7 @@ import { useScrollY, useScrollYFloored } from "@/hooks/useScrollY";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { useCurrentBreakpoint, useMediaQueryState } from "@/hooks/useMediaQuery";
 import createGlobalPresence from "@/hooks/useGlobalPresence";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useState } from "react";
 
 // Create a global presence hook for demo
@@ -21,7 +22,7 @@ const useScrollDemoPresence = createGlobalPresence({
 // Mouse position demo component
 function MousePositionDemo() {
 	const [x, y] = useMousePosition();
-	
+
 	return (
 		<div className="p-6 bg-blue-50 rounded-lg border border-blue-200">
 			<h3 className="text-xl font-semibold mb-4 text-blue-900">🖱️ Mouse Position</h3>
@@ -35,6 +36,9 @@ function MousePositionDemo() {
 				<p className="text-sm text-blue-600 mt-3">
 					Move your mouse around to see real-time position updates using <code>useMousePosition</code>
 				</p>
+				<p className="text-xs text-blue-500 mt-2">
+					📈 Uses rAF for performance - very high frequency events
+				</p>
 			</div>
 		</div>
 	);
@@ -45,7 +49,7 @@ function ScrollPositionDemo() {
 	useScrollDemoPresence(); // Demo of global presence
 	const scrollY = useScrollY();
 	const flooredScrollY = useScrollYFloored(100);
-	
+
 	return (
 		<div className="p-6 bg-green-50 rounded-lg border border-green-200">
 			<h3 className="text-xl font-semibold mb-4 text-green-900">📜 Scroll Position</h3>
@@ -60,6 +64,9 @@ function ScrollPositionDemo() {
 					Scroll the page to see updates using <code>useScrollY</code> and <code>useScrollYFloored</code>
 				</p>
 				<p className="text-xs text-green-500 mt-2">
+					📈 Uses rAF for performance - high frequency events
+				</p>
+				<p className="text-xs text-green-500 mt-1">
 					💡 Check console for global presence demo messages
 				</p>
 			</div>
@@ -67,13 +74,13 @@ function ScrollPositionDemo() {
 	);
 }
 
-// Window size demo component  
+// Window size demo component
 function WindowSizeDemo() {
 	const { width, height } = useWindowSize();
-	const { width: roundedWidth } = useWindowSize({ 
-		widthSelector: (w) => Math.round(w / 100) * 100 
+	const { width: roundedWidth } = useWindowSize({
+		widthSelector: (w) => Math.round(w / 100) * 100
 	});
-	
+
 	return (
 		<div className="p-6 bg-purple-50 rounded-lg border border-purple-200">
 			<h3 className="text-xl font-semibold mb-4 text-purple-900">🖥️ Window Size</h3>
@@ -90,6 +97,40 @@ function WindowSizeDemo() {
 				<p className="text-sm text-purple-600 mt-3">
 					Resize your browser window to see updates using <code>useWindowSize</code>
 				</p>
+				<p className="text-xs text-purple-500 mt-2">
+					📈 Uses rAF for performance - high frequency events
+				</p>
+			</div>
+		</div>
+	);
+}
+
+// Online status demo component
+function OnlineStatusDemo() {
+	const isOnline = useOnlineStatus();
+
+	return (
+		<div className="p-6 bg-amber-50 rounded-lg border border-amber-200">
+			<h3 className="text-xl font-semibold mb-4 text-amber-900">🌐 Online Status</h3>
+			<div className="space-y-2">
+				<p className="text-amber-800">
+					Status: <span className={`font-mono px-2 py-1 rounded ${
+						isOnline ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+					}`}>
+						{isOnline ? 'Online' : 'Offline'}
+					</span>
+				</p>
+				<p className="text-sm text-amber-600 mt-3">
+					Toggle your network connection to see instant updates using <code>useOnlineStatus</code>
+				</p>
+				<p className="text-xs text-amber-500 mt-2">
+					⚡ No rAF - immediate feedback needed for network status
+				</p>
+				<div className="mt-3 p-2 bg-white rounded border-l-4 border-amber-500">
+					<p className="text-xs text-amber-700">
+						<strong>💡 Test it:</strong> Open browser dev tools → Network tab → Go offline/online
+					</p>
+				</div>
 			</div>
 		</div>
 	);
@@ -99,7 +140,7 @@ function WindowSizeDemo() {
 function EnhancedMediaQueryDemo() {
 	const breakpoint = useCurrentBreakpoint();
 	const mediaState = useMediaQueryState();
-	
+
 	return (
 		<div className="p-6 bg-indigo-50 rounded-lg border border-indigo-200">
 			<h3 className="text-xl font-semibold mb-4 text-indigo-900">📱 Enhanced Media Queries</h3>
@@ -130,7 +171,7 @@ function EnhancedMediaQueryDemo() {
 // Fake cursor toggle component
 function FakeCursorDemo() {
 	const [enabled, setEnabled] = useState(false);
-	
+
 	return (
 		<div className="p-6 bg-red-50 rounded-lg border border-red-200">
 			<h3 className="text-xl font-semibold mb-4 text-red-900">🎯 Fake Cursor (Global Presence Demo)</h3>
@@ -142,8 +183,8 @@ function FakeCursorDemo() {
 					type="button"
 					onClick={() => setEnabled(!enabled)}
 					className={`px-4 py-2 rounded font-medium transition ${
-						enabled 
-							? 'bg-red-500 text-white hover:bg-red-600' 
+						enabled
+							? 'bg-red-500 text-white hover:bg-red-600'
 							: 'bg-red-200 text-red-800 hover:bg-red-300'
 					}`}
 				>
@@ -164,7 +205,7 @@ export default function Home() {
 			<div className="max-w-4xl mx-auto">
 				<h1 className="text-4xl font-bold text-center mb-4">useSyncExternalStore Examples</h1>
 				<p className="text-center mb-8 text-gray-600 max-w-3xl mx-auto">
-					Comprehensive examples of React's <code className="bg-gray-100 px-1 rounded">useSyncExternalStore</code> hook 
+					Comprehensive examples of React's <code className="bg-gray-100 px-1 rounded">useSyncExternalStore</code> hook
 					for creating external stores. Each demo showcases different patterns and use cases.
 				</p>
 
@@ -181,10 +222,11 @@ export default function Home() {
 					{/* Browser Events Section */}
 					<section>
 						<h2 className="text-2xl font-semibold mb-4 text-gray-800">🌐 Browser Events</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<MousePositionDemo />
 							<ScrollPositionDemo />
 							<WindowSizeDemo />
+							<OnlineStatusDemo />
 						</div>
 					</section>
 
@@ -253,15 +295,15 @@ export default function Home() {
 								</li>
 								<li>
 									<code className="bg-gray-100 p-1 rounded">getSnapshot</code>: Function to get the current value from the
-									store  
+									store
 								</li>
 								<li>
 									<code className="bg-gray-100 p-1 rounded">getServerSnapshot</code>: Function to get the initial value
 									for SSR (optional)
 								</li>
 							</ul>
-							
-							<h3 className="text-lg font-semibold mb-3 mt-6 text-yellow-900">Available Hooks</h3>
+
+														<h3 className="text-lg font-semibold mb-3 mt-6 text-yellow-900">Available Hooks</h3>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
 								<div>
 									<h4 className="font-semibold text-yellow-800">State Management</h4>
@@ -273,10 +315,33 @@ export default function Home() {
 								<div>
 									<h4 className="font-semibold text-yellow-800">Browser Events</h4>
 									<ul className="list-disc list-inside text-yellow-700 ml-2">
-										<li><code>useMousePosition</code> - Mouse coordinates</li>
-										<li><code>useScrollY</code> - Scroll position</li>
-										<li><code>useWindowSize</code> - Window dimensions</li>
-										<li><code>useMediaQuery</code> - Responsive breakpoints</li>
+										<li><code>useMousePosition</code> - Mouse coordinates (rAF)</li>
+										<li><code>useScrollY</code> - Scroll position (rAF)</li>
+										<li><code>useWindowSize</code> - Window dimensions (rAF)</li>
+										<li><code>useOnlineStatus</code> - Network status (no rAF)</li>
+										<li><code>useMediaQuery</code> - Responsive breakpoints (rAF)</li>
+									</ul>
+								</div>
+							</div>
+							
+							<h3 className="text-lg font-semibold mb-3 mt-6 text-yellow-900">Performance Patterns</h3>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+								<div className="bg-green-50 p-3 rounded border border-green-200">
+									<h4 className="font-semibold text-green-800 mb-2">✅ With requestAnimationFrame</h4>
+									<p className="text-green-700 mb-2">High-frequency events (60+ fps):</p>
+									<ul className="list-disc list-inside text-green-600 text-xs ml-2">
+										<li>mousemove, scroll, resize</li>
+										<li>Prevents layout thrashing</li>
+										<li>Batches updates for smooth performance</li>
+									</ul>
+								</div>
+								<div className="bg-red-50 p-3 rounded border border-red-200">
+									<h4 className="font-semibold text-red-800 mb-2">❌ No requestAnimationFrame</h4>
+									<p className="text-red-700 mb-2">Low-frequency events (immediate feedback):</p>
+									<ul className="list-disc list-inside text-red-600 text-xs ml-2">
+										<li>online/offline, storage, focus</li>
+										<li>Critical timing required</li>
+										<li>User expects instant response</li>
 									</ul>
 								</div>
 							</div>
