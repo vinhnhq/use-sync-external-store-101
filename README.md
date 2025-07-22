@@ -123,10 +123,32 @@ function WindowTracker() {
   const { width: roundedWidth } = useWindowSize({
     widthSelector: (w) => Math.round(w / 100) * 100
   });
-
+  
   return <div>{width} × {height} (rounded: {roundedWidth})</div>;
 }
 ```
+
+#### `useOnlineStatus`
+**File:** `src/hooks/useOnlineStatus.tsx`
+
+Track browser online/offline status for network connectivity awareness.
+
+```typescript
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+
+function NetworkStatus() {
+  const isOnline = useOnlineStatus();
+  
+  return (
+    <div>
+      Status: {isOnline ? '🟢 Online' : '🔴 Offline'}
+      {!isOnline && <p>Please check your internet connection</p>}
+    </div>
+  );
+}
+```
+
+**Note:** This hook deliberately does NOT use `requestAnimationFrame` because online/offline events are infrequent and require immediate user feedback.
 
 ### 📱 Media Queries
 
@@ -182,7 +204,7 @@ function ResponsiveComponent() {
 
 ### ⚡ RequestAnimationFrame Optimization
 
-Media query and mouse position hooks use rAF for optimal performance:
+Most browser event hooks use rAF for optimal performance with high-frequency events:
 
 ```typescript
 const notifyListeners = () => {
@@ -200,6 +222,18 @@ const notifyListeners = () => {
 - Batches multiple updates into single render cycles
 - Ensures updates happen at optimal rendering time
 - Improves performance with many subscribing components
+
+### 🎯 When to Use/Skip RequestAnimationFrame
+
+| Hook Type | Uses rAF? | Reason |
+|-----------|-----------|---------|
+| `useMousePosition` | ✅ Yes | Very high frequency (100+ events/sec) |
+| `useScrollY` | ✅ Yes | High frequency during scrolling |
+| `useWindowSize` | ✅ Yes | High frequency during resize |
+| `useMediaQuery` | ✅ Yes | Multiple components benefit from batching |
+| `useOnlineStatus` | ❌ No | Infrequent events, immediate feedback needed |
+
+**Rule of thumb:** Use rAF for events that fire >30 times/second or when multiple components subscribe. Skip rAF for rare events where immediate feedback is critical.
 
 ### 🛡️ SSR Safety
 
@@ -245,6 +279,7 @@ src/
     ├── useMousePosition.tsx  # Mouse coordinate tracking
     ├── useScrollY.tsx        # Scroll position tracking
     ├── useWindowSize.tsx     # Window size tracking
+    ├── useOnlineStatus.tsx   # Network connectivity tracking
     └── useMediaQuery.tsx     # Media query system
 ```
 
@@ -269,6 +304,7 @@ The live demo includes several interactive tests:
 - **Mouse tracking** - Move your mouse to see coordinates
 - **Scroll tracking** - Scroll the page to see position updates
 - **Window resize** - Resize browser to see dimension changes
+- **Network status** - Go offline/online in dev tools to test immediate feedback
 
 ### 3. **Media Queries**
 - **Responsive breakpoints** - Resize to see breakpoint changes
